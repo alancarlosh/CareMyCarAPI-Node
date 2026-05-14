@@ -143,7 +143,7 @@ function parsePagination(query) {
   const limit = parseInteger(query.limit ?? 20);
 
   if (page === null || limit === null) {
-    return { error: 'page/limit must be integer' };
+    return { error: 'page/limit deben ser enteros' };
   }
 
   return {
@@ -154,7 +154,7 @@ function parsePagination(query) {
 
 async function validateCreatePayload(payload) {
   const required = ['name', 'category', 'make', 'year', 'model', 'price', 'quantity'];
-  const errors = required.filter((field) => !Object.hasOwn(payload, field)).map((field) => `${field} is required`);
+  const errors = required.filter((field) => !Object.hasOwn(payload, field)).map((field) => `${field} es obligatorio`);
   if (errors.length) {
     return { errors };
   }
@@ -163,33 +163,33 @@ async function validateCreatePayload(payload) {
     .trim()
     .toLowerCase();
   if (!validPartCategories.has(category)) {
-    return { error: 'invalid category' };
+    return { error: 'Categoría inválida' };
   }
 
   const make = String(payload.make || '').trim();
   if (!make) {
-    return { error: 'make must not be empty' };
+    return { error: 'make no debe estar vacío' };
   }
 
   const model = String(payload.model || '').trim();
   if (!(await hasValidMakeModel(make, model))) {
-    return { error: 'make/model not available in maintenance_costs dataset' };
+    return { error: 'make/model no disponible en el dataset maintenance_costs' };
   }
 
   const year = parseInteger(payload.year);
   const price = parseFloatValue(payload.price);
   const quantity = parseInteger(payload.quantity);
   if (year === null || price === null || quantity === null) {
-    return { error: 'year/price/quantity types are invalid' };
+    return { error: 'Los tipos de year/price/quantity son inválidos' };
   }
 
   if (quantity < 0 || price < 0) {
-    return { error: 'quantity and price must be >= 0' };
+    return { error: 'quantity y price deben ser >= 0' };
   }
 
   const compatibility = payload.compatibility ?? [];
   if (compatibility !== null && !Array.isArray(compatibility)) {
-    return { error: 'compatibility must be a list' };
+    return { error: 'compatibility debe ser una lista' };
   }
 
   return {
@@ -209,61 +209,61 @@ async function validateCreatePayload(payload) {
 async function validateUpdatePayload(partId, userId, payload) {
   const updates = Part.allowedUpdates(payload);
   if (!Object.keys(updates).length) {
-    return { error: 'empty payload' };
+    return { error: 'Payload vacío' };
   }
 
   if (Object.hasOwn(updates, 'category')) {
     updates.category = String(updates.category).trim().toLowerCase();
     if (!validPartCategories.has(updates.category)) {
-      return { error: 'invalid category' };
+      return { error: 'Categoría inválida' };
     }
   }
 
   if (Object.hasOwn(updates, 'year')) {
     updates.year = parseInteger(updates.year);
     if (updates.year === null) {
-      return { error: 'year must be integer' };
+      return { error: 'year debe ser entero' };
     }
   }
 
   if (Object.hasOwn(updates, 'make')) {
     updates.make = String(updates.make).trim();
     if (!updates.make) {
-      return { error: 'make must not be empty' };
+      return { error: 'make no debe estar vacío' };
     }
   }
 
   if (Object.hasOwn(updates, 'model')) {
     updates.model = String(updates.model).trim();
     if (!updates.model) {
-      return { error: 'model must not be empty' };
+      return { error: 'model no debe estar vacío' };
     }
   }
 
   if (Object.hasOwn(updates, 'make') || Object.hasOwn(updates, 'model')) {
     const current = await Part.findByIdForUser(partId, userId);
     if (!current) {
-      return { error: 'Part not found' };
+      return { error: 'Refacción no encontrada' };
     }
 
     const currentMake = updates.make ?? current.make;
     const currentModel = updates.model ?? current.model;
     if (!(await hasValidMakeModel(currentMake, currentModel))) {
-      return { error: 'make/model not available in maintenance_costs dataset' };
+      return { error: 'make/model no disponible en el dataset maintenance_costs' };
     }
   }
 
   if (Object.hasOwn(updates, 'price')) {
     updates.price = parseFloatValue(updates.price);
     if (updates.price === null) {
-      return { error: 'price must be numeric' };
+      return { error: 'price debe ser numérico' };
     }
   }
 
   if (Object.hasOwn(updates, 'quantity')) {
     updates.quantity = parseInteger(updates.quantity);
     if (updates.quantity === null) {
-      return { error: 'quantity must be integer' };
+      return { error: 'quantity debe ser entero' };
     }
   }
 

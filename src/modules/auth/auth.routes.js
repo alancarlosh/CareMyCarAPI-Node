@@ -16,14 +16,14 @@ router.post(
     const name = String(payload.name || '').trim() || null;
 
     if (!validateEmail(email)) {
-      return res.status(400).json({ error: 'Invalid email' });
+      return res.status(400).json({ error: 'Correo inválido' });
     }
     if (!validatePassword(password)) {
-      return res.status(400).json({ error: 'Invalid password' });
+      return res.status(400).json({ error: 'Contraseña inválida' });
     }
 
     if (await User.findByEmail(email)) {
-      return res.status(409).json({ error: 'Email already registered' });
+      return res.status(409).json({ error: 'El correo ya está registrado' });
     }
 
     const created = await User.createUser({ email, password, name });
@@ -40,7 +40,7 @@ router.post(
 
     const user = await User.findByEmail(email);
     if (!user || !(await User.verifyPassword(user, password))) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
     const token = createAccessToken(String(user._id));

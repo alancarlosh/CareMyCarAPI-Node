@@ -11,7 +11,7 @@ describe('auth compatibility basics', () => {
     });
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'Invalid email' });
+    expect(res.body).toEqual({ error: 'Correo inválido' });
   });
 
   it('rejects missing bearer token on profile', async () => {
@@ -20,6 +20,6 @@ describe('auth compatibility basics', () => {
     const res = await request(app).get('/api/auth/profile');
 
     expect(res.status).toBe(401);
-    expect(res.body).toEqual({ error: 'Missing or invalid token' });
+    expect(res.body).toEqual({ error: 'Token faltante o inválido' });
   });
 });

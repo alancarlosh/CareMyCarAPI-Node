@@ -14,13 +14,13 @@ describe('parts service compatibility', () => {
   it('validates create payload with Flask-compatible errors', async () => {
     await expect(PartsService.validateCreatePayload({})).resolves.toEqual({
       errors: [
-        'name is required',
-        'category is required',
-        'make is required',
-        'year is required',
-        'model is required',
-        'price is required',
-        'quantity is required',
+        'name es obligatorio',
+        'category es obligatorio',
+        'make es obligatorio',
+        'year es obligatorio',
+        'model es obligatorio',
+        'price es obligatorio',
+        'quantity es obligatorio',
       ],
     });
 
@@ -34,12 +34,12 @@ describe('parts service compatibility', () => {
         price: 10,
         quantity: 1,
       }),
-    ).resolves.toEqual({ error: 'invalid category' });
+    ).resolves.toEqual({ error: 'Categoría inválida' });
   });
 
   it('rejects decimal string integers like Flask int conversion', () => {
     expect(PartsService.parsePagination({ page: '1.5', limit: '20' })).toEqual({
-      error: 'page/limit must be integer',
+      error: 'page/limit deben ser enteros',
     });
   });
 });

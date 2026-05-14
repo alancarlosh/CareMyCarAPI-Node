@@ -15,7 +15,7 @@ async function loadDefaultCatalogItems() {
       throw err;
     }
 
-    const error = new Error('No input payload and default catalog file not found');
+    const error = new Error('No se recibió payload y no se encontró el archivo de catálogo por defecto');
     error.statusCode = 400;
     throw error;
   }

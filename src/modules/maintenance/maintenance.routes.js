@@ -24,13 +24,13 @@ router.post(
 
     const vehicleId = payload.vehicle_id;
     if (!isValidObjectId(vehicleId)) {
-      return res.status(400).json({ error: 'Invalid vehicle id' });
+      return res.status(400).json({ error: 'ID de vehículo inválido' });
     }
 
     const userId = String(req.currentUser._id);
     const vehicle = await Vehicle.findByIdForUser(vehicleId, userId);
     if (!vehicle) {
-      return res.status(404).json({ error: 'Vehicle not found' });
+      return res.status(404).json({ error: 'Vehículo no encontrado' });
     }
 
     const item = await Maintenance.create(userId, payload);
@@ -44,13 +44,13 @@ router.get(
   asyncHandler(async (req, res) => {
     const { vehicleId } = req.params;
     if (!isValidObjectId(vehicleId)) {
-      return res.status(400).json({ error: 'Invalid vehicle id' });
+      return res.status(400).json({ error: 'ID de vehículo inválido' });
     }
 
     const userId = String(req.currentUser._id);
     const vehicle = await Vehicle.findByIdForUser(vehicleId, userId);
     if (!vehicle) {
-      return res.status(404).json({ error: 'Vehicle not found' });
+      return res.status(404).json({ error: 'Vehículo no encontrado' });
     }
 
     const payload = await MaintenanceService.computeVehicleDue(req.currentUser, vehicle);
@@ -78,7 +78,7 @@ router.get(
   '/insights/upcoming/all',
   asyncHandler(async (req, res) => {
     if (String(req.currentUser.role || 'user').toLowerCase() !== 'admin') {
-      return res.status(403).json({ error: 'Forbidden' });
+      return res.status(403).json({ error: 'Prohibido' });
     }
 
     const rows = await MaintenanceDue.listAllDue();
@@ -93,13 +93,13 @@ router.get(
   asyncHandler(async (req, res) => {
     const { vehicleId } = req.params;
     if (!isValidObjectId(vehicleId)) {
-      return res.status(400).json({ error: 'Invalid vehicle id' });
+      return res.status(400).json({ error: 'ID de vehículo inválido' });
     }
 
     const userId = String(req.currentUser._id);
     const vehicle = await Vehicle.findByIdForUser(vehicleId, userId);
     if (!vehicle) {
-      return res.status(404).json({ error: 'Vehicle not found' });
+      return res.status(404).json({ error: 'Vehículo no encontrado' });
     }
 
     const items = await Maintenance.findByVehicle(userId, vehicleId);
@@ -112,7 +112,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const { maintenanceId } = req.params;
     if (!isValidObjectId(maintenanceId)) {
-      return res.status(400).json({ error: 'Invalid maintenance id' });
+      return res.status(400).json({ error: 'ID de mantenimiento inválido' });
     }
 
     const payload = req.body || {};
@@ -125,7 +125,7 @@ router.put(
     const existing = await Maintenance.findByIdForUser(maintenanceId, userId);
     const item = await Maintenance.updateForUser(maintenanceId, userId, payload);
     if (!item) {
-      return res.status(404).json({ error: 'Maintenance record not found or empty payload' });
+      return res.status(404).json({ error: 'Registro de mantenimiento no encontrado o payload vacío' });
     }
 
     if (existing) {
@@ -144,14 +144,14 @@ router.delete(
   asyncHandler(async (req, res) => {
     const { maintenanceId } = req.params;
     if (!isValidObjectId(maintenanceId)) {
-      return res.status(400).json({ error: 'Invalid maintenance id' });
+      return res.status(400).json({ error: 'ID de mantenimiento inválido' });
     }
 
     const userId = String(req.currentUser._id);
     const existing = await Maintenance.findByIdForUser(maintenanceId, userId);
     const deleted = await Maintenance.deleteForUser(maintenanceId, userId);
     if (!deleted) {
-      return res.status(404).json({ error: 'Maintenance record not found' });
+      return res.status(404).json({ error: 'Registro de mantenimiento no encontrado' });
     }
 
     if (existing) {

@@ -34,7 +34,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const item = await VehicleCatalog.findById(req.params.catalogId);
     if (!item) {
-      return res.status(404).json({ error: 'Catalog vehicle not found' });
+      return res.status(404).json({ error: 'Vehículo de catálogo no encontrado' });
     }
 
     return res.status(200).json({ item });

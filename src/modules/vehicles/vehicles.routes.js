@@ -44,12 +44,12 @@ router.get(
   asyncHandler(async (req, res) => {
     const { vehicleId } = req.params;
     if (!isValidObjectId(vehicleId)) {
-      return res.status(400).json({ error: 'Invalid vehicle id' });
+      return res.status(400).json({ error: 'ID de vehículo inválido' });
     }
 
     const vehicle = await Vehicle.findByIdForUser(vehicleId, String(req.currentUser._id));
     if (!vehicle) {
-      return res.status(404).json({ error: 'Vehicle not found' });
+      return res.status(404).json({ error: 'Vehículo no encontrado' });
     }
 
     return res.status(200).json({ vehicle });
@@ -61,7 +61,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const { vehicleId } = req.params;
     if (!isValidObjectId(vehicleId)) {
-      return res.status(400).json({ error: 'Invalid vehicle id' });
+      return res.status(400).json({ error: 'ID de vehículo inválido' });
     }
 
     const payload = req.body || {};
@@ -78,7 +78,7 @@ router.put(
 
     const vehicle = await Vehicle.updateForUser(vehicleId, String(req.currentUser._id), applied.payload);
     if (!vehicle) {
-      return res.status(404).json({ error: 'Vehicle not found or empty payload' });
+      return res.status(404).json({ error: 'Vehículo no encontrado o payload vacío' });
     }
 
     return res.status(200).json({ vehicle });
@@ -90,12 +90,12 @@ router.delete(
   asyncHandler(async (req, res) => {
     const { vehicleId } = req.params;
     if (!isValidObjectId(vehicleId)) {
-      return res.status(400).json({ error: 'Invalid vehicle id' });
+      return res.status(400).json({ error: 'ID de vehículo inválido' });
     }
 
     const deleted = await Vehicle.deleteForUser(vehicleId, String(req.currentUser._id));
     if (!deleted) {
-      return res.status(404).json({ error: 'Vehicle not found' });
+      return res.status(404).json({ error: 'Vehículo no encontrado' });
     }
 
     return res.status(200).json({ status: 'deleted' });

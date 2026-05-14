@@ -35,44 +35,44 @@ function validateVehiclePayload(payload, partial = false) {
   if (!partial) {
     for (const field of required) {
       if (!hasOwn(payload, field) && !(field === 'current_mileage' && hasOwn(payload, 'mileage'))) {
-        errors.push(`${field} is required`);
+        errors.push(`${field} es obligatorio`);
       }
     }
   }
 
   if (hasOwn(payload, 'year') && !isPythonInteger(payload.year)) {
-    errors.push('year must be integer');
+    errors.push('year debe ser entero');
   }
 
   if (hasOwn(payload, 'current_mileage') && !isPythonInteger(payload.current_mileage)) {
-    errors.push('current_mileage must be integer');
+    errors.push('current_mileage debe ser entero');
   }
 
   if (hasOwn(payload, 'mileage') && !isPythonInteger(payload.mileage)) {
-    errors.push('mileage must be integer (deprecated, use current_mileage)');
+    errors.push('mileage debe ser entero (obsoleto, usa current_mileage)');
   }
 
   if (hasOwn(payload, 'vehicle_type') && !validVehicleTypes.has(String(payload.vehicle_type).toLowerCase())) {
-    errors.push('vehicle_type must be one of: sedan, suv, pickup, hatchback, coupe, van, wagon, other');
+    errors.push('vehicle_type debe ser uno de: sedan, suv, pickup, hatchback, coupe, van, wagon, other');
   }
 
   if (hasOwn(payload, 'fuel_type') && !validFuelTypes.has(String(payload.fuel_type).toLowerCase())) {
-    errors.push('fuel_type must be one of: gasolina, diesel, electrico, hibrido');
+    errors.push('fuel_type debe ser uno de: gasolina, diesel, electrico, hibrido');
   }
 
   if (hasOwn(payload, 'transmission') && !validTransmission.has(String(payload.transmission).toLowerCase())) {
-    errors.push('transmission must be one of: manual, automatica');
+    errors.push('transmission debe ser uno de: manual, automatica');
   }
 
   if (hasOwn(payload, 'usage_type') && !validUsageTypes.has(String(payload.usage_type).toLowerCase())) {
-    errors.push('usage_type must be one of: ciudad, carretera, mixto');
+    errors.push('usage_type debe ser uno de: ciudad, carretera, mixto');
   }
 
   if (
     hasOwn(payload, 'driving_conditions') &&
     !validDrivingConditions.has(String(payload.driving_conditions).toLowerCase())
   ) {
-    errors.push('driving_conditions must be one of: severas, normales, suaves');
+    errors.push('driving_conditions debe ser uno de: severas, normales, suaves');
   }
 
   const integerFields = [
@@ -85,19 +85,19 @@ function validateVehiclePayload(payload, partial = false) {
 
   for (const field of integerFields) {
     if (hasOwn(payload, field) && !isPythonInteger(payload[field])) {
-      errors.push(`${field} must be integer`);
+      errors.push(`${field} debe ser entero`);
     }
   }
 
   if (hasOwn(payload, 'acquisition_date') && !dateRe.test(String(payload.acquisition_date))) {
-    errors.push('acquisition_date must use YYYY-MM-DD format');
+    errors.push('acquisition_date debe usar formato YYYY-MM-DD');
   }
 
   if (
     hasOwn(payload, 'maintenance_history') &&
     (payload.maintenance_history === null || typeof payload.maintenance_history !== 'object' || Array.isArray(payload.maintenance_history))
   ) {
-    errors.push('maintenance_history must be an object');
+    errors.push('maintenance_history debe ser un objeto');
   }
 
   if (
@@ -113,15 +113,15 @@ function validateVehiclePayload(payload, partial = false) {
 
 function validateMaintenanceHistory(history, errors) {
   if (hasOwn(history, 'last_oil_change_date') && !dateRe.test(String(history.last_oil_change_date))) {
-    errors.push('maintenance_history.last_oil_change_date must use YYYY-MM-DD format');
+    errors.push('maintenance_history.last_oil_change_date debe usar formato YYYY-MM-DD');
   }
 
   if (hasOwn(history, 'last_oil_change_mileage') && !isPythonInteger(history.last_oil_change_mileage)) {
-    errors.push('maintenance_history.last_oil_change_mileage must be integer');
+    errors.push('maintenance_history.last_oil_change_mileage debe ser entero');
   }
 
   if (hasOwn(history, 'oil_change_interval_km') && !isPythonInteger(history.oil_change_interval_km)) {
-    errors.push('maintenance_history.oil_change_interval_km must be integer');
+    errors.push('maintenance_history.oil_change_interval_km debe ser entero');
   }
 
   const filters = history.filters || {};
@@ -132,16 +132,16 @@ function validateMaintenanceHistory(history, errors) {
 
     const entry = filters[field];
     if (entry === null || typeof entry !== 'object' || Array.isArray(entry)) {
-      errors.push(`maintenance_history.filters.${field} must be an object`);
+      errors.push(`maintenance_history.filters.${field} debe ser un objeto`);
       continue;
     }
 
     if (hasOwn(entry, 'date') && !dateRe.test(String(entry.date))) {
-      errors.push(`maintenance_history.filters.${field}.date must use YYYY-MM-DD format`);
+      errors.push(`maintenance_history.filters.${field}.date debe usar formato YYYY-MM-DD`);
     }
 
     if (hasOwn(entry, 'km') && !isPythonInteger(entry.km)) {
-      errors.push(`maintenance_history.filters.${field}.km must be integer`);
+      errors.push(`maintenance_history.filters.${field}.km debe ser entero`);
     }
   }
 
@@ -156,19 +156,19 @@ function validateTires(history, errors) {
   }
 
   if (typeof tires !== 'object' || Array.isArray(tires)) {
-    errors.push('maintenance_history.tires must be an object');
+    errors.push('maintenance_history.tires debe ser un objeto');
     return;
   }
 
   for (const field of ['last_rotation_date', 'last_balancing_date', 'last_alignment_date', 'purchase_date']) {
     if (hasOwn(tires, field) && !dateRe.test(String(tires[field]))) {
-      errors.push(`maintenance_history.tires.${field} must use YYYY-MM-DD format`);
+      errors.push(`maintenance_history.tires.${field} debe usar formato YYYY-MM-DD`);
     }
   }
 
   for (const field of ['tread_depth_mm', 'tire_pressure_psi']) {
     if (hasOwn(tires, field) && !isPythonNumeric(tires[field])) {
-      errors.push(`maintenance_history.tires.${field} must be numeric`);
+      errors.push(`maintenance_history.tires.${field} debe ser numérico`);
     }
   }
 }
@@ -180,19 +180,19 @@ function validateBrakes(history, errors) {
   }
 
   if (typeof brakes !== 'object' || Array.isArray(brakes)) {
-    errors.push('maintenance_history.brakes must be an object');
+    errors.push('maintenance_history.brakes debe ser un objeto');
     return;
   }
 
   for (const field of ['last_change_date', 'fluid_bleed_date']) {
     if (hasOwn(brakes, field) && !dateRe.test(String(brakes[field]))) {
-      errors.push(`maintenance_history.brakes.${field} must use YYYY-MM-DD format`);
+      errors.push(`maintenance_history.brakes.${field} debe usar formato YYYY-MM-DD`);
     }
   }
 
   for (const field of ['front_pad_thickness_mm', 'rear_pad_thickness_mm', 'brake_fluid_level_percent']) {
     if (hasOwn(brakes, field) && !isPythonNumeric(brakes[field])) {
-      errors.push(`maintenance_history.brakes.${field} must be numeric`);
+      errors.push(`maintenance_history.brakes.${field} debe ser numérico`);
     }
   }
 }
@@ -204,17 +204,17 @@ function validateMaintenancePayload(payload, partial = false) {
   if (!partial) {
     for (const field of required) {
       if (!hasOwn(payload, field)) {
-        errors.push(`${field} is required`);
+        errors.push(`${field} es obligatorio`);
       }
     }
   }
 
   if (hasOwn(payload, 'cost') && !isPythonNumeric(payload.cost)) {
-    errors.push('cost must be numeric');
+    errors.push('cost debe ser numérico');
   }
 
   if (hasOwn(payload, 'mileage') && !isPythonInteger(payload.mileage)) {
-    errors.push('mileage must be integer');
+    errors.push('mileage debe ser entero');
   }
 
   return errors;
@@ -247,7 +247,7 @@ function validateServiceOrderPayload(payload, partial = false) {
   if (!partial) {
     for (const field of required) {
       if (!hasOwn(payload, field)) {
-        errors.push(`${field} is required`);
+        errors.push(`${field} es obligatorio`);
       }
     }
   }
@@ -255,22 +255,22 @@ function validateServiceOrderPayload(payload, partial = false) {
   if (hasOwn(payload, 'scheduled_date')) {
     const parsed = parseDateOnly(payload.scheduled_date);
     if (!parsed) {
-      errors.push('scheduled_date must use YYYY-MM-DD format');
+      errors.push('scheduled_date debe usar formato YYYY-MM-DD');
     } else if (parsed < todayDateOnly()) {
-      errors.push('scheduled_date must be today or a future date');
+      errors.push('scheduled_date debe ser hoy o una fecha futura');
     }
   }
 
   if (hasOwn(payload, 'estimated_cost') && !isPythonNumeric(payload.estimated_cost)) {
-    errors.push('estimated_cost must be numeric');
+    errors.push('estimated_cost debe ser numérico');
   }
 
   if (hasOwn(payload, 'final_cost') && !isPythonNumeric(payload.final_cost)) {
-    errors.push('final_cost must be numeric');
+    errors.push('final_cost debe ser numérico');
   }
 
   if (hasOwn(payload, 'status') && !validServiceOrderStatus.has(String(payload.status).toUpperCase())) {
-    errors.push('status must be one of: PROGRAMADO, EN_PROCESO, FINALIZADO, CANCELADO');
+    errors.push('status debe ser uno de: PROGRAMADO, EN_PROCESO, FINALIZADO, CANCELADO');
   }
 
   return errors;

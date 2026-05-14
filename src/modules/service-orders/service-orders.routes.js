@@ -24,13 +24,13 @@ router.post(
 
     const vehicleId = payload.vehicle_id;
     if (!isValidObjectId(vehicleId)) {
-      return res.status(400).json({ error: 'Invalid vehicle id' });
+      return res.status(400).json({ error: 'ID de vehículo inválido' });
     }
 
     const userId = String(req.currentUser._id);
     const vehicle = await Vehicle.findByIdForUser(vehicleId, userId);
     if (!vehicle) {
-      return res.status(404).json({ error: 'Vehicle not found' });
+      return res.status(404).json({ error: 'Vehículo no encontrado' });
     }
 
     const history = await Maintenance.findByVehicle(userId, vehicleId);
@@ -67,19 +67,19 @@ router.post(
   asyncHandler(async (req, res) => {
     const { vehicleId } = req.params;
     if (!isValidObjectId(vehicleId)) {
-      return res.status(400).json({ error: 'Invalid vehicle id' });
+      return res.status(400).json({ error: 'ID de vehículo inválido' });
     }
 
     const userId = String(req.currentUser._id);
     const vehicle = await Vehicle.findByIdForUser(vehicleId, userId);
     if (!vehicle) {
-      return res.status(404).json({ error: 'Vehicle not found' });
+      return res.status(404).json({ error: 'Vehículo no encontrado' });
     }
 
     const payload = req.body || {};
     const serviceType = payload.service_type;
     if (!serviceType) {
-      return res.status(400).json({ error: 'service_type is required' });
+      return res.status(400).json({ error: 'service_type es obligatorio' });
     }
 
     const history = await Maintenance.findByVehicle(userId, vehicleId);
@@ -100,7 +100,7 @@ router.get(
   '/report',
   asyncHandler(async (req, res) => {
     if (!ServiceOrdersService.isAdmin(req.currentUser)) {
-      return res.status(403).json({ error: 'Forbidden' });
+      return res.status(403).json({ error: 'Prohibido' });
     }
 
     const dateFrom = String(req.query.from || '').trim();
@@ -130,7 +130,7 @@ router.get(
   '/',
   asyncHandler(async (req, res) => {
     if (!ServiceOrdersService.isAdmin(req.currentUser)) {
-      return res.status(403).json({ error: 'Forbidden' });
+      return res.status(403).json({ error: 'Prohibido' });
     }
 
     const status = String(req.query.status || '')
@@ -150,20 +150,20 @@ router.patch(
   '/:orderId/start',
   asyncHandler(async (req, res) => {
     if (!ServiceOrdersService.isAdmin(req.currentUser)) {
-      return res.status(403).json({ error: 'Forbidden' });
+      return res.status(403).json({ error: 'Prohibido' });
     }
 
     const { orderId } = req.params;
     if (!isValidObjectId(orderId)) {
-      return res.status(400).json({ error: 'Invalid order id' });
+      return res.status(400).json({ error: 'ID de orden inválido' });
     }
 
     const order = await ServiceOrder.findById(orderId);
     if (!order) {
-      return res.status(404).json({ error: 'Order not found' });
+      return res.status(404).json({ error: 'Orden no encontrada' });
     }
     if (order.status !== 'PROGRAMADO') {
-      return res.status(409).json({ error: 'Only PROGRAMADO orders can move to EN_PROCESO' });
+      return res.status(409).json({ error: 'Solo órdenes PROGRAMADO pueden pasar a EN_PROCESO' });
     }
 
     const payload = req.body || {};
@@ -180,12 +180,12 @@ router.patch(
   '/:orderId/complete',
   asyncHandler(async (req, res) => {
     if (!ServiceOrdersService.isAdmin(req.currentUser)) {
-      return res.status(403).json({ error: 'Forbidden' });
+      return res.status(403).json({ error: 'Prohibido' });
     }
 
     const { orderId } = req.params;
     if (!isValidObjectId(orderId)) {
-      return res.status(400).json({ error: 'Invalid order id' });
+      return res.status(400).json({ error: 'ID de orden inválido' });
     }
 
     const payload = req.body || {};
@@ -196,15 +196,15 @@ router.patch(
 
     const order = await ServiceOrder.findById(orderId);
     if (!order) {
-      return res.status(404).json({ error: 'Order not found' });
+      return res.status(404).json({ error: 'Orden no encontrada' });
     }
     if (order.status !== 'EN_PROCESO') {
-      return res.status(409).json({ error: 'Only EN_PROCESO orders can be completed' });
+      return res.status(409).json({ error: 'Solo órdenes EN_PROCESO pueden finalizarse' });
     }
 
     const providedToken = String(payload.completion_token || '').trim();
     if (!providedToken || providedToken !== String(order.completion_token || '')) {
-      return res.status(400).json({ error: 'Invalid completion token' });
+      return res.status(400).json({ error: 'Token de finalización inválido' });
     }
 
     const updated = await ServiceOrder.update(orderId, {
@@ -232,7 +232,7 @@ router.patch(
   asyncHandler(async (req, res) => {
     const { orderId } = req.params;
     if (!isValidObjectId(orderId)) {
-      return res.status(400).json({ error: 'Invalid order id' });
+      return res.status(400).json({ error: 'ID de orden inválido' });
     }
 
     const isAdmin = ServiceOrdersService.isAdmin(req.currentUser);
@@ -240,10 +240,10 @@ router.patch(
       ? await ServiceOrder.findById(orderId)
       : await ServiceOrder.findByIdForUser(orderId, String(req.currentUser._id));
     if (!order) {
-      return res.status(404).json({ error: 'Order not found' });
+      return res.status(404).json({ error: 'Orden no encontrada' });
     }
     if (order.status === 'FINALIZADO' || order.status === 'CANCELADO') {
-      return res.status(409).json({ error: 'Order can not be canceled in current status' });
+      return res.status(409).json({ error: 'La orden no se puede cancelar en el estado actual' });
     }
 
     const payload = req.body || {};

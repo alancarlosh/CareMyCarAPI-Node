@@ -69,7 +69,7 @@ router.get(
       .trim()
       .toLowerCase();
     if (status && status !== 'all' && !OrdersService.validOrderStatuses.has(status)) {
-      return res.status(400).json({ error: 'invalid status' });
+      return res.status(400).json({ error: 'Estado inválido' });
     }
 
     const result = await Order.findPurchasesByBuyer(String(req.currentUser._id), {
@@ -139,7 +139,7 @@ router.get(
       .trim()
       .toLowerCase();
     if (status && status !== 'all' && !OrdersService.validOrderStatuses.has(status)) {
-      return res.status(400).json({ error: 'invalid status' });
+      return res.status(400).json({ error: 'Estado inválido' });
     }
 
     const result = await Order.findFiltered(String(req.currentUser._id), {
@@ -165,12 +165,12 @@ router.get(
   asyncHandler(async (req, res) => {
     const { orderId } = req.params;
     if (!isValidObjectId(orderId)) {
-      return res.status(400).json({ error: 'Invalid order id' });
+      return res.status(400).json({ error: 'ID de orden inválido' });
     }
 
     const order = await Order.findByIdForUser(orderId, String(req.currentUser._id));
     if (!order) {
-      return res.status(404).json({ error: 'Order not found' });
+      return res.status(404).json({ error: 'Orden no encontrada' });
     }
 
     return res.status(200).json({ order });
@@ -182,7 +182,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const { orderId } = req.params;
     if (!isValidObjectId(orderId)) {
-      return res.status(400).json({ error: 'Invalid order id' });
+      return res.status(400).json({ error: 'ID de orden inválido' });
     }
 
     const result = await OrdersService.updateSellerOrder(orderId, String(req.currentUser._id), req.body || {});
@@ -199,7 +199,7 @@ router.delete(
   asyncHandler(async (req, res) => {
     const { orderId } = req.params;
     if (!isValidObjectId(orderId)) {
-      return res.status(400).json({ error: 'Invalid order id' });
+      return res.status(400).json({ error: 'ID de orden inválido' });
     }
 
     const result = await OrdersService.deleteSellerOrder(orderId, String(req.currentUser._id));

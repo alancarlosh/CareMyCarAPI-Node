@@ -12,7 +12,7 @@ async function applyCatalogVehicle(payload) {
 
   const catalogVehicle = await VehicleCatalog.findById(catalogId);
   if (!catalogVehicle) {
-    return { payload: nextPayload, error: 'catalog_vehicle_id not found in catalog' };
+    return { payload: nextPayload, error: 'catalog_vehicle_id no encontrado en el catálogo' };
   }
 
   nextPayload.catalog_vehicle_id = catalogId;

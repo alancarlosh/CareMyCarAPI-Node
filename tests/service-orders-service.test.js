@@ -11,9 +11,9 @@ function futureDate() {
 describe('service orders compatibility helpers', () => {
   it('validates service order payload like Flask', () => {
     expect(validateServiceOrderPayload({}, false)).toEqual([
-      'vehicle_id is required',
-      'service_type is required',
-      'scheduled_date is required',
+      'vehicle_id es obligatorio',
+      'service_type es obligatorio',
+      'scheduled_date es obligatorio',
     ]);
 
     expect(

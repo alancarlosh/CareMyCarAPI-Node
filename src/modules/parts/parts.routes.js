@@ -67,12 +67,12 @@ router.get(
   asyncHandler(async (req, res) => {
     const { partId } = req.params;
     if (!isValidObjectId(partId)) {
-      return res.status(400).json({ error: 'Invalid part id' });
+      return res.status(400).json({ error: 'ID de refacción inválido' });
     }
 
     const part = await Part.findByIdForUser(partId, String(req.currentUser._id));
     if (!part) {
-      return res.status(404).json({ error: 'Part not found' });
+      return res.status(404).json({ error: 'Refacción no encontrada' });
     }
 
     return res.status(200).json({ part });
@@ -84,18 +84,18 @@ router.put(
   asyncHandler(async (req, res) => {
     const { partId } = req.params;
     if (!isValidObjectId(partId)) {
-      return res.status(400).json({ error: 'Invalid part id' });
+      return res.status(400).json({ error: 'ID de refacción inválido' });
     }
 
     const validation = await PartsService.validateUpdatePayload(partId, String(req.currentUser._id), req.body || {});
     if (validation.error) {
-      const status = validation.error === 'Part not found' ? 404 : 400;
+      const status = validation.error === 'Refacción no encontrada' ? 404 : 400;
       return res.status(status).json({ error: validation.error });
     }
 
     const part = await Part.updateForUser(partId, String(req.currentUser._id), validation.updates);
     if (!part) {
-      return res.status(404).json({ error: 'Part not found' });
+      return res.status(404).json({ error: 'Refacción no encontrada' });
     }
 
     return res.status(200).json({ part });
@@ -107,12 +107,12 @@ router.delete(
   asyncHandler(async (req, res) => {
     const { partId } = req.params;
     if (!isValidObjectId(partId)) {
-      return res.status(400).json({ error: 'Invalid part id' });
+      return res.status(400).json({ error: 'ID de refacción inválido' });
     }
 
     const deleted = await Part.deleteForUser(partId, String(req.currentUser._id));
     if (!deleted) {
-      return res.status(404).json({ error: 'Part not found' });
+      return res.status(404).json({ error: 'Refacción no encontrada' });
     }
 
     return res.status(200).json({ status: 'deleted' });

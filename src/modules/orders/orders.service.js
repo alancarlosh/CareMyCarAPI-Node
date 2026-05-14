@@ -82,7 +82,7 @@ function parsePagination(query) {
   const page = parseInteger(query.page ?? 1);
   const limit = parseInteger(query.limit ?? 20);
   if (page === null || limit === null) {
-    return { error: 'page/limit must be integer' };
+    return { error: 'page/limit deben ser enteros' };
   }
 
   return {
@@ -103,13 +103,13 @@ function parseReportDate(value) {
   }
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
-    return { error: 'date must use YYYY-MM-DD format' };
+    return { error: 'date debe usar formato YYYY-MM-DD' };
   }
 
   const [year, month, day] = raw.split('-').map(Number);
   const parsed = new Date(year, month - 1, day);
   if (parsed.getFullYear() !== year || parsed.getMonth() !== month - 1 || parsed.getDate() !== day) {
-    return { error: 'date must use YYYY-MM-DD format' };
+    return { error: 'date debe usar formato YYYY-MM-DD' };
   }
 
   return { date: parsed };
@@ -158,7 +158,7 @@ async function getOptions(userId, query) {
   if (yearRaw) {
     filterYear = parseInteger(yearRaw);
     if (filterYear === null) {
-      return { error: 'year must be integer' };
+      return { error: 'year debe ser entero' };
     }
   }
 
@@ -196,30 +196,30 @@ function buyVin() {
 async function purchaseMarketplaceProduct(currentUser, payload) {
   const partId = payload.part_id;
   if (!isValidObjectId(partId)) {
-    return { status: 400, error: 'Invalid part id' };
+    return { status: 400, error: 'ID de refacción inválido' };
   }
 
   const quantity = parseInteger(Object.hasOwn(payload, 'quantity') ? payload.quantity : 1);
   if (quantity === null) {
-    return { status: 400, error: 'quantity must be integer' };
+    return { status: 400, error: 'quantity debe ser entero' };
   }
   if (quantity <= 0) {
-    return { status: 400, error: 'quantity must be > 0' };
+    return { status: 400, error: 'quantity debe ser > 0' };
   }
 
   const rawPart = await Part.findRawById(partId);
   if (!rawPart) {
-    return { status: 404, error: 'Part not found' };
+    return { status: 404, error: 'Refacción no encontrada' };
   }
 
   const sellerId = String(rawPart.user_id || '');
   if (sellerId === String(currentUser._id)) {
-    return { status: 400, error: 'You can not buy your own product' };
+    return { status: 400, error: 'No puedes comprar tu propio producto' };
   }
 
   const updatedPart = await Part.reserveStock(partId, sellerId, quantity);
   if (!updatedPart) {
-    return { status: 400, error: 'insufficient stock' };
+    return { status: 400, error: 'Stock insuficiente' };
   }
 
   const make = String(updatedPart.make || 'N/A').trim() || 'N/A';
@@ -249,52 +249,52 @@ async function purchaseMarketplaceProduct(currentUser, payload) {
 
 async function createSellerOrder(currentUser, payload) {
   const required = ['client_name', 'vin', 'make', 'year', 'model', 'part_id', 'quantity'];
-  const errors = required.filter((field) => !Object.hasOwn(payload, field)).map((field) => `${field} is required`);
+  const errors = required.filter((field) => !Object.hasOwn(payload, field)).map((field) => `${field} es obligatorio`);
   if (errors.length) {
     return { errors };
   }
 
   const partId = payload.part_id;
   if (!isValidObjectId(partId)) {
-    return { status: 400, error: 'Invalid part id' };
+    return { status: 400, error: 'ID de refacción inválido' };
   }
 
   const quantity = parseInteger(payload.quantity);
   const year = parseInteger(payload.year);
   if (quantity === null || year === null) {
-    return { status: 400, error: 'quantity/year types are invalid' };
+    return { status: 400, error: 'Los tipos de quantity/year son inválidos' };
   }
   if (quantity <= 0) {
-    return { status: 400, error: 'quantity must be > 0' };
+    return { status: 400, error: 'quantity debe ser > 0' };
   }
 
   const make = String(payload.make || '').trim();
   if (!make) {
-    return { status: 400, error: 'make must not be empty' };
+    return { status: 400, error: 'make no debe estar vacío' };
   }
 
   const model = String(payload.model || '').trim();
   if (!model) {
-    return { status: 400, error: 'model must not be empty' };
+    return { status: 400, error: 'model no debe estar vacío' };
   }
 
   if (!(await hasValidMakeModel(make, model))) {
-    return { status: 400, error: 'make/model not available in maintenance_costs dataset' };
+    return { status: 400, error: 'make/model no disponible en el dataset maintenance_costs' };
   }
 
   const userId = String(currentUser._id);
   const part = await Part.findRawByIdForUser(partId, userId);
   if (!part) {
-    return { status: 404, error: 'Part not found' };
+    return { status: 404, error: 'Refacción no encontrada' };
   }
 
   if (String(part.make || '').trim().toLowerCase() !== make.toLowerCase() || String(part.model || '').trim().toLowerCase() !== model.toLowerCase()) {
-    return { status: 400, error: 'selected part does not match make/model' };
+    return { status: 400, error: 'La refacción seleccionada no coincide con make/model' };
   }
 
   const updatedPart = await Part.reserveStock(partId, userId, quantity);
   if (!updatedPart) {
-    return { status: 400, error: 'insufficient stock' };
+    return { status: 400, error: 'Stock insuficiente' };
   }
 
   const unitPrice = Number(updatedPart.price || 0);
@@ -302,7 +302,7 @@ async function createSellerOrder(currentUser, payload) {
     .trim()
     .toLowerCase();
   if (requestedStatus !== 'pending') {
-    return { status: 400, error: 'initial status must be pending' };
+    return { status: 400, error: 'El estado inicial debe ser pending' };
   }
 
   const order = await Order.create({
@@ -330,7 +330,7 @@ function transitionError(currentStatus, nextStatus) {
 
   const allowedNext = orderAllowedTransitions[currentStatus] || new Set();
   if (!allowedNext.has(nextStatus)) {
-    return `invalid status transition: ${currentStatus} -> ${nextStatus}`;
+    return `Transición de estado inválida: ${currentStatus} -> ${nextStatus}`;
   }
 
   return null;
@@ -339,19 +339,19 @@ function transitionError(currentStatus, nextStatus) {
 async function updateSellerOrder(orderId, userId, payload) {
   const current = await Order.findByIdForUser(orderId, userId);
   if (!current) {
-    return { status: 404, error: 'Order not found' };
+    return { status: 404, error: 'Orden no encontrada' };
   }
 
   const updates = Order.allowedUpdates(payload);
   if (!Object.keys(updates).length) {
-    return { status: 400, error: 'empty payload' };
+    return { status: 400, error: 'Payload vacío' };
   }
 
   let shouldRecordSale = false;
   if (Object.hasOwn(updates, 'status')) {
     updates.status = String(updates.status).trim().toLowerCase();
     if (!validOrderStatuses.has(updates.status)) {
-      return { status: 400, error: 'invalid status' };
+      return { status: 400, error: 'Estado inválido' };
     }
 
     const currentStatus = String(current.status || 'pending').trim().toLowerCase();
@@ -366,7 +366,7 @@ async function updateSellerOrder(orderId, userId, payload) {
   if (Object.hasOwn(updates, 'year')) {
     updates.year = parseInteger(updates.year);
     if (updates.year === null) {
-      return { status: 400, error: 'year must be integer' };
+      return { status: 400, error: 'year debe ser entero' };
     }
   }
 
@@ -377,14 +377,14 @@ async function updateSellerOrder(orderId, userId, payload) {
   if (Object.hasOwn(updates, 'make')) {
     updates.make = String(updates.make).trim();
     if (!updates.make) {
-      return { status: 400, error: 'make must not be empty' };
+      return { status: 400, error: 'make no debe estar vacío' };
     }
   }
 
   if (Object.hasOwn(updates, 'model')) {
     updates.model = String(updates.model).trim();
     if (!updates.model) {
-      return { status: 400, error: 'model must not be empty' };
+      return { status: 400, error: 'model no debe estar vacío' };
     }
   }
 
@@ -392,13 +392,13 @@ async function updateSellerOrder(orderId, userId, payload) {
     const currentMake = updates.make ?? current.make;
     const currentModel = updates.model ?? current.model;
     if (!(await hasValidMakeModel(currentMake, currentModel))) {
-      return { status: 400, error: 'make/model not available in maintenance_costs dataset' };
+      return { status: 400, error: 'make/model no disponible en el dataset maintenance_costs' };
     }
   }
 
   const order = await Order.updateForUser(orderId, userId, updates);
   if (!order) {
-    return { status: 404, error: 'Order not found' };
+    return { status: 404, error: 'Orden no encontrada' };
   }
 
   if (shouldRecordSale) {
@@ -411,12 +411,12 @@ async function updateSellerOrder(orderId, userId, payload) {
 async function deleteSellerOrder(orderId, userId) {
   const order = await Order.findByIdForUser(orderId, userId);
   if (!order) {
-    return { status: 404, error: 'Order not found' };
+    return { status: 404, error: 'Orden no encontrada' };
   }
 
   const deleted = await Order.deleteForUser(orderId, userId);
   if (!deleted) {
-    return { status: 404, error: 'Order not found' };
+    return { status: 404, error: 'Orden no encontrada' };
   }
 
   const quantity = parseInteger(order.quantity || 0);

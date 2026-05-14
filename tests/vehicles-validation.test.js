@@ -3,10 +3,10 @@ const { validateVehiclePayload } = require('../src/utils/validators');
 describe('vehicle validation compatibility', () => {
   it('requires Flask-compatible fields on create and accepts mileage as current_mileage alias', () => {
     expect(validateVehiclePayload({}, false)).toEqual([
-      'make is required',
-      'model is required',
-      'year is required',
-      'current_mileage is required',
+      'make es obligatorio',
+      'model es obligatorio',
+      'year es obligatorio',
+      'current_mileage es obligatorio',
     ]);
 
     expect(
@@ -51,17 +51,17 @@ describe('vehicle validation compatibility', () => {
     );
 
     expect(errors).toEqual([
-      'vehicle_type must be one of: sedan, suv, pickup, hatchback, coupe, van, wagon, other',
-      'fuel_type must be one of: gasolina, diesel, electrico, hibrido',
-      'transmission must be one of: manual, automatica',
-      'usage_type must be one of: ciudad, carretera, mixto',
-      'driving_conditions must be one of: severas, normales, suaves',
-      'maintenance_history.last_oil_change_date must use YYYY-MM-DD format',
-      'maintenance_history.last_oil_change_mileage must be integer',
-      'maintenance_history.filters.oil.date must use YYYY-MM-DD format',
-      'maintenance_history.filters.oil.km must be integer',
-      'maintenance_history.tires.tread_depth_mm must be numeric',
-      'maintenance_history.brakes.last_change_date must use YYYY-MM-DD format',
+      'vehicle_type debe ser uno de: sedan, suv, pickup, hatchback, coupe, van, wagon, other',
+      'fuel_type debe ser uno de: gasolina, diesel, electrico, hibrido',
+      'transmission debe ser uno de: manual, automatica',
+      'usage_type debe ser uno de: ciudad, carretera, mixto',
+      'driving_conditions debe ser uno de: severas, normales, suaves',
+      'maintenance_history.last_oil_change_date debe usar formato YYYY-MM-DD',
+      'maintenance_history.last_oil_change_mileage debe ser entero',
+      'maintenance_history.filters.oil.date debe usar formato YYYY-MM-DD',
+      'maintenance_history.filters.oil.km debe ser entero',
+      'maintenance_history.tires.tread_depth_mm debe ser numérico',
+      'maintenance_history.brakes.last_change_date debe usar formato YYYY-MM-DD',
     ]);
   });
 });
