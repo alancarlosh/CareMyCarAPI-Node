@@ -9,6 +9,7 @@ const partsRoutes = require('./modules/parts/parts.routes');
 const ordersRoutes = require('./modules/orders/orders.routes');
 const serviceOrdersRoutes = require('./modules/service-orders/service-orders.routes');
 const predictionsRoutes = require('./modules/predictions/predictions.routes');
+const toolsRoutes = require('./modules/tools/tools.routes');
 const { errorHandler, notFoundHandler } = require('./middleware/error-handler');
 
 function createApp() {
@@ -28,6 +29,7 @@ function createApp() {
   app.use('/api/parts', partsRoutes);
   app.use('/api/orders', ordersRoutes);
   app.use('/api/service-orders', serviceOrdersRoutes);
+  app.use('/api/tools', toolsRoutes);
   app.use('/api', predictionsRoutes);
 
   app.use(notFoundHandler);

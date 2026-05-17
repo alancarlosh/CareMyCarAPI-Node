@@ -8,6 +8,7 @@ Base inicial creada para migrar modulo por modulo.
 
 - `GET /health` listo
 - `/api/auth` base inicial lista
+- `GET /api/tools/monthly-cost` disponible como herramienta pública
 - Modulos restantes con estructura preparada
 - Predicciones ML reservadas para fase 2
 
@@ -65,8 +66,17 @@ src/
 │   ├── parts/
 │   ├── orders/
 │   ├── service-orders/
-│   └── predictions/
+│   ├── predictions/
+│   └── tools/
 └── utils/
+```
+
+## Herramientas públicas
+
+Costo mensual estimado de uso:
+
+```bash
+curl "http://localhost:5000/api/tools/monthly-cost?monthlyKm=1200&kmPerLiter=13&fuelPrice=24.5&maintenancePerKm=0.8"
 ```
 
 ## Regla de migracion
